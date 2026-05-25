@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insurance Claim Underwriter</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/index.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- LEFT SIDEBAR: Customer Details -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i data-lucide="shield" class="logo-icon"></i>
+                </div>
+                <div class="brand-info">
+                    <h2>AI Underwriter</h2>
+                    <p>Smart. Transparent. Trusted.</p>
+                </div>
+            </div>
+
+            <div class="sidebar-header">
+                <h3>Customer Details</h3>
+                <p>Provide customer and claim information</p>
+            </div>
+
+            <form id="claim-form" class="inputs-form">
+                <!-- Customer Age Slider -->
+                <div class="input-group">
+                    <div class="input-label-container">
+                        <span class="input-icon-label">
+                            <i data-lucide="user"></i>
+                            Customer Age
+                        </span>
+                        <span id="age-val" class="input-value text-blue">35</span>
+                    </div>
+                    <input type="range" id="age" name="Customer_Age" min="18" max="100" value="35" class="slider-input slider-blue">
+                    <div class="slider-bounds">
+                        <span>18</span>
+                        <span>100</span>
+                    </div>
+                </div>
+
+                <!-- Policy Tenure Slider -->
+                <div class="input-group">
+                    <div class="input-label-container">
+                        <span class="input-icon-label">
+                            <i data-lucide="calendar"></i>
+                            Policy Tenure (Months)
+                        </span>
+                        <span id="tenure-val" class="input-value text-purple">24</span>
+                    </div>
+                    <input type="range" id="tenure" name="Policy_Tenure_Months" min="1" max="120" value="24" class="slider-input slider-purple">
+                    <div class="slider-bounds">
+                        <span>1</span>
+                        <span>120</span>
+                    </div>
+                </div>
+
+                <!-- Claim Amount Number Input -->
+                <div class="input-group">
+                    <div class="input-label-container">
+                        <span class="input-icon-label">
+                            <i data-lucide="dollar-sign"></i>
+                            Claim Amount ($)
+                        </span>
+                    </div>
+                    <div class="number-input-container">
+                        <button type="button" class="num-btn btn-minus" id="amount-minus">—</button>
+                        <input type="text" id="amount" name="Claim_Amount" value="5,000" class="number-input">
+                        <button type="button" class="num-btn btn-plus" id="amount-plus">+</button>
+                    </div>
+                </div>
+
+                <!-- Previous Claims Select Box -->
+                <div class="input-group">
+                    <div class="input-label-container">
+                        <span class="input-icon-label">
+                            <i data-lucide="file-text"></i>
+                            Previous Claims
+                        </span>
+                    </div>
+                    <div class="select-container">
+                        <select id="prev-claims" name="Previous_Claims" class="select-input">
+                            <option value="0" selected>0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="select-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Credit Score Slider -->
+                <div class="input-group">
+                    <div class="input-label-container">
+                        <span class="input-icon-label">
+                            <i data-lucide="gauge"></i>
+                            Credit Score
+                        </span>
+                        <span id="credit-val" class="input-value text-pink">650</span>
+                    </div>
+                    <input type="range" id="credit" name="Credit_Score" min="300" max="850" value="650" class="slider-input slider-pink">
+                    <div class="slider-bounds">
+                        <span>300</span>
+                        <span>850</span>
+                    </div>
+                </div>
+
+                <!-- Location Type Select Box -->
+                <div class="input-group">
+                    <div class="input-label-container">
+                        <span class="input-icon-label">
+                            <i data-lucide="map-pin"></i>
+                            Location Type
+                        </span>
+                    </div>
+                    <div class="select-container">
+                        <select id="location" name="Location_Type" class="select-input">
+                            <option value="0" selected>Urban</option>
+                            <option value="1">Suburban</option>
+                            <option value="2">Rural</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="select-arrow"></i>
+                    </div>
+                </div>
+            </form>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-bar">
+                <div class="action-buttons">
+                    <button type="button" class="btn-deploy" id="btn-deploy">
+                        <i data-lucide="rocket"></i>
+                        Deploy
+                    </button>
+                    <button type="button" class="btn-icon" id="btn-theme-toggle" title="Toggle Dark/Light Mode">
+                        <i data-lucide="moon"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="btn-more">
+                        <i data-lucide="more-vertical"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Headline Banner -->
+            <section class="banner">
+                <div class="banner-icon-container">
+                    <i data-lucide="shield" class="banner-logo-icon"></i>
+                </div>
+                <div class="banner-text">
+                    <h1>AI Insurance Claim Underwriter</h1>
+                    <p>This system predicts claim approvals and provides transparent, AI-driven explanations for its decisions.</p>
+                </div>
+            </section>
+
+            <!-- Analyze Trigger Button -->
+            <div class="actions-section">
+                <button type="button" class="btn-analyze" id="btn-analyze">
+                    <i data-lucide="sparkles"></i>
+                    <span>Analyze Claim</span>
+                </button>
+                <button type="button" class="btn-clear" id="btn-clear">
+                    <i data-lucide="rotate-ccw"></i>
+                    <span>Clear Analysis</span>
+                </button>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- CARD 1: AI Decision -->
+                <article class="card card-decision">
+                    <div class="card-header">
+                        <div class="badge badge-decision">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <h3>AI Decision</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Main prediction state result -->
+                        <div id="decision-result" class="decision-result-box loading">
+                            <div class="spinner-container">
+                                <div class="spinner"></div>
+                                <span>Running analysis...</span>
+                            </div>
+                        </div>
+
+                        <!-- Key Insights -->
+                        <div class="insights-section">
+                            <h4>Key Insights</h4>
+                            <div id="insights-container" class="insights-grid">
+                                <!-- Dynamic Insights Badges -->
+                                <div class="skeleton skeleton-badge"></div>
+                                <div class="skeleton skeleton-badge"></div>
+                                <div class="skeleton skeleton-badge"></div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CARD 2: Decision Transparency -->
+                <article class="card card-transparency">
+                    <div class="card-header">
+                        <div class="badge badge-transparency">
+                            <i data-lucide="eye"></i>
+                        </div>
+                        <h3>Decision Transparency (LIME)</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Prediction Probabilities -->
+                        <div class="probabilities-section">
+                            <h4>Prediction Probabilities</h4>
+                            <div class="prob-list">
+                                <!-- Denied Prob -->
+                                <div class="prob-row">
+                                    <span class="prob-label">Denied</span>
+                                    <div class="prob-bar-container">
+                                        <div id="prob-denied-bar" class="prob-bar bar-denied" style="width: 0%;"></div>
+                                    </div>
+                                    <span id="prob-denied-val" class="prob-percentage text-denied">0.00%</span>
+                                </div>
+                                <!-- Approved Prob -->
+                                <div class="prob-row">
+                                    <span class="prob-label">Approved</span>
+                                    <div class="prob-bar-container">
+                                        <div id="prob-approved-bar" class="prob-bar bar-approved" style="width: 0%;"></div>
+                                    </div>
+                                    <span id="prob-approved-val" class="prob-percentage text-approved">0.00%</span>
+                                </div>
+                            </div>
+                            <div class="prob-legend">
+                                <span class="legend-denied">Denied</span>
+                                <span id="model-verdict" class="legend-verdict text-approved">Approved</span>
+                            </div>
+                        </div>
+
+                        <!-- Top Contributing Factors -->
+                        <div class="factors-section">
+                            <h4>Top Contributing Factors</h4>
+                            <div id="factors-container" class="factors-list">
+                                <!-- Dynamic LIME factors will be rendered here -->
+                                <div class="skeleton skeleton-factor"></div>
+                                <div class="skeleton skeleton-factor"></div>
+                                <div class="skeleton skeleton-factor"></div>
+                                <div class="skeleton skeleton-factor"></div>
+                                <div class="skeleton skeleton-factor"></div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Footer Warning Alert -->
+            <footer class="footer-alert">
+                <i data-lucide="info" class="footer-icon"></i>
+                <p>This AI model is for demonstration purposes only and should not replace human decision-making.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- DEPLOYMENT MODAL -->
+    <div class="modal-overlay" id="deploy-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-logo">
+                    <i data-lucide="rocket"></i>
+                </div>
+                <h3>Deploy Model to Production</h3>
+                <button type="button" class="modal-close" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="deploy-steps">
+                    <div class="step-item active" id="step-1">
+                        <div class="step-bullet">1</div>
+                        <div class="step-title">Serialize Weights</div>
+                    </div>
+                    <div class="step-item" id="step-2">
+                        <div class="step-bullet">2</div>
+                        <div class="step-title">Generate API Endpoint</div>
+                    </div>
+                    <div class="step-item" id="step-3">
+                        <div class="step-bullet">3</div>
+                        <div class="step-title">Health Check & Warmup</div>
+                    </div>
+                    <div class="step-item" id="step-4">
+                        <div class="step-bullet">4</div>
+                        <div class="step-title">Active Gateway</div>
+                    </div>
+                </div>
+
+                <div class="console-output">
+                    <div class="console-header">
+                        <span>terminal_session</span>
+                        <div class="console-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="console-body" id="console-logs">
+                        <p class="console-line text-mute">Initializing deploy sequence...</p>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="deploy-progress"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="btn-cancel-deploy">Cancel</button>
+                <button type="button" class="btn-action" id="btn-start-deploy">Start Deployment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="/static/index.js"></script>
+</body>
+</html>
