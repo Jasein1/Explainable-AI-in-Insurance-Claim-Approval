@@ -4,64 +4,87 @@ import pickle
 import lime.lime_tabular
 import matplotlib.pyplot as plt
 
-# 1. Page Config (MUST be first)
+# 1. Page Config
 st.set_page_config(
-    page_title="AI Insurance Claim Underwriter",
+    page_title="AI Underwriter",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS INJECTION (Your custom UI/UX design)
+# 2. EXACT UI MATCH CSS INJECTION
 st.markdown("""
     <style>
-        /* Hide Streamlit default menus */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        header {visibility: hidden;}
+        /* Base Dark Background */
+        .stApp {
+            background-color: #121826 !important;
+        }
+
+        /* Global Text Styling */
+        h1, h2, h3, h4, h5, h6, p, span, label, div {
+            color: #E2E8F0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        
+        /* Hide default Streamlit fluff */
+        header, footer, #MainMenu {visibility: hidden;}
         [data-testid="collapsedControl"] {display: none;}
 
-        /* App Background */
-        .stApp {
-            background-color: #f8fafc;
-        }
-
-        /* Dashboard Panels */
-        div[data-testid="column"] {
-            background-color: white;
-            padding: 2rem;
+        /* --- LAYOUT PANELS --- */
+        
+        /* Left Panel (Inputs) */
+        [data-testid="column"]:nth-of-type(1) {
+            background-color: #1A2235;
+            padding: 2rem !important;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            border: 1px solid #2A3449;
+            height: 100%;
         }
 
-        /* Custom Button Styling */
+        /* Right Result Cards (Sub-columns) */
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-of-type(1) > div > div > div > div[data-testid="stVerticalBlock"],
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-of-type(2) > div > div > div > div[data-testid="stVerticalBlock"] {
+            background-color: #1A2235;
+            padding: 1.5rem !important;
+            border-radius: 12px;
+            border: 1px solid #2A3449;
+        }
+
+        /* --- CONTROLS & ACCENTS --- */
+
+        /* Indigo Accent Button */
         .stButton > button {
-            background-color: #2563eb !important;
+            background-color: #6366F1 !important;
             color: white !important;
             border-radius: 8px !important;
             border: none !important;
-            padding: 0.75rem 1rem !important;
+            padding: 0.6rem 1.5rem !important;
             font-weight: 600 !important;
-            transition: all 0.2s ease !important;
-            width: 100% !important;
+            transition: 0.3s !important;
+            width: 100%;
         }
         .stButton > button:hover {
-            background-color: #1d4ed8 !important;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
-            transform: translateY(-1px) !important;
+            background-color: #4F46E5 !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
         }
 
-        /* Input Boxes */
+        /* Sliders */
+        .stSlider > div[data-baseweb="slider"] > div > div {
+            background-color: #6366F1 !important; 
+        }
+
+        /* Dark Input Boxes */
         div[data-baseweb="select"] > div, 
-        input[type="number"], 
-        div[data-baseweb="slider"] {
-            border-radius: 8px !important;
+        input[type="number"] {
+            background-color: #0F172A !important;
+            color: white !important;
+            border: 1px solid #334155 !important;
+            border-radius: 6px !important;
         }
         
-        /* Headers */
-        h1, h2, h3 {
-            color: #0f172a !important;
+        /* Matplotlib Chart Background Fix */
+        .stImage > img {
+            border-radius: 8px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -78,7 +101,7 @@ def load_assets():
 try:
     model, X_train = load_assets()
 except Exception as e:
-    st.error("Error: Could not find 'insurance_model.pkl' or 'insurance_data.csv'. Please ensure they are uploaded to GitHub.")
+    st.error("Error loading model. Make sure 'insurance_model.pkl' is uploaded.")
     st.stop()
 
 # 4. Initialize LIME
@@ -89,30 +112,43 @@ explainer = lime.lime_tabular.LimeTabularExplainer(
     mode='classification'
 )
 
-# 5. Dashboard Layout
-st.title("🛡️ AI Insurance Underwriting Dashboard")
-st.markdown("Predict claim approvals and generate transparent LIME explanations.")
-st.write("") # Spacer
+# 5. UI ARCHITECTURE (Matches Screenshot Layout)
 
-col1, col2 = st.columns([1, 1.5], gap="large")
+# Main Grid: Left Panel (1) : Right Area (3)
+left_panel, right_area = st.columns([1, 3], gap="large")
 
-with col1:
-    st.subheader("📝 Customer Profile")
+with left_panel:
+    st.markdown("### 🛡️ AI Underwriter")
+    st.caption("Smart. Transparent. Trusted.")
+    st.write("---")
+    
+    st.markdown("#### Customer Details")
+    st.caption("Provide customer and claim information")
+    
     age = st.slider("Customer Age", 18, 80, 35)
     tenure = st.slider("Policy Tenure (Months)", 1, 120, 24)
     amount = st.number_input("Claim Amount ($)", min_value=500, max_value=50000, value=5000, step=500)
     prev_claims = st.selectbox("Previous Claims", [0, 1, 2, 3, 4, 5])
     credit = st.slider("Credit Score", 300, 850, 650)
     location = st.selectbox("Location Type", [0, 1, 2], format_func=lambda x: ["Urban", "Suburban", "Rural"][x])
-    
-    st.write("") # Spacer
-    predict_button = st.button("Run AI Prediction", use_container_width=True)
 
-with col2:
-    st.subheader("📊 AI Decision Engine")
+with right_area:
+    st.markdown("## 🛡️ AI Insurance Claim Underwriter")
+    st.caption("This system predicts claim approvals and provides transparent, AI-driven explanations for its decisions.")
+    st.write("")
     
-    if predict_button:
-        # Build Dataframe
+    # Analyze Button row
+    analyze_btn_col, spacer = st.columns([1, 4])
+    with analyze_btn_col:
+        analyze_button = st.button("✨ Analyze Claim")
+    
+    st.write("")
+    
+    # Result Cards (Side by Side)
+    res_col1, res_col2 = st.columns(2, gap="medium")
+    
+    if analyze_button:
+        # Data Prep
         input_data = pd.DataFrame({
             "Customer_Age": [age],
             "Policy_Tenure_Months": [tenure],
@@ -126,24 +162,48 @@ with col2:
         prediction = int(model.predict(input_data)[0])
         probabilities = model.predict_proba(input_data)[0]
         
-        # UI Feedback
-        if prediction == 1:
-            st.success(f"✅ **CLAIM APPROVED** (Confidence: {probabilities[1]*100:.1f}%)")
-        else:
-            st.error(f"❌ **CLAIM DENIED** (Confidence: {probabilities[0]*100:.1f}%)")
-            
-        st.write("---")
-        st.markdown("**Transparent LIME Explanation**")
-        st.caption("Green bars indicate factors pushing toward Approval. Red bars indicate factors pushing toward Denial.")
-        
-        # Generate LIME
-        with st.spinner("Processing explanation..."):
-            exp = explainer.explain_instance(
-                data_row=input_data.iloc[0].values,
-                predict_fn=model.predict_proba
-            )
-            fig = exp.as_pyplot_figure()
-            st.pyplot(fig)
-            
+        with res_col1:
+            st.markdown("#### ✅ AI Decision")
+            st.write("---")
+            if prediction == 1:
+                st.success(f"**CLAIM APPROVED**")
+                st.info(f"Confidence: **{probabilities[1]*100:.1f}%**")
+            else:
+                st.error(f"**CLAIM DENIED**")
+                st.warning(f"Confidence: **{probabilities[0]*100:.1f}%**")
+                
+            st.markdown("**Key Insights:**")
+            if credit >= 700: st.write("• Strong Credit Score")
+            if prev_claims == 0: st.write("• Clean Claims History")
+            if amount > 15000: st.write("• High Claim Amount Review")
+                
+        with res_col2:
+            st.markdown("#### 👁️ Decision Transparency (LIME)")
+            st.write("---")
+            with st.spinner("Processing explanation..."):
+                exp = explainer.explain_instance(
+                    data_row=input_data.iloc[0].values,
+                    predict_fn=model.predict_proba
+                )
+                
+                # Dark theme for the matplotlib figure
+                fig = exp.as_pyplot_figure()
+                fig.patch.set_facecolor('#1A2235') # Match card background
+                ax = fig.gca()
+                ax.set_facecolor('#1A2235')
+                ax.tick_params(colors='white')
+                ax.xaxis.label.set_color('white')
+                ax.yaxis.label.set_color('white')
+                
+                st.pyplot(fig)
+                
     else:
-        st.info("👈 Configure the customer profile on the left and click 'Run AI Prediction' to generate an underwriting decision.")
+        # Default empty state
+        with res_col1:
+            st.markdown("#### ✅ AI Decision")
+            st.write("---")
+            st.info("No analysis run yet. Adjust details and click Analyze.")
+        with res_col2:
+            st.markdown("#### 👁️ Decision Transparency (LIME)")
+            st.write("---")
+            st.caption("Waiting for parameters...")
