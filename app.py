@@ -56,4 +56,4 @@ with col1:
     credit = st.slider("Credit Score", 300, 850, 650)
     location = st.selectbox("Location Type", [0, 1, 2], format_func=lambda x: ["Urban", "Suburban", "Rural"][x])
     
-    predict_button = st.button("Run AI Prediction", type="primary", use_container_width
+    predict_button = st.button("Run AI Prediction", type="primary", use_container_width=True)
